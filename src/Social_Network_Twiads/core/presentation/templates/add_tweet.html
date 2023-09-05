@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Create Tweet</h1>
+<form method="POST" action="{% url 'add-tweet' %}">
+    {% csrf_token %}
+    {{ form  }}    
+    <input type="submit" id="submit">
+</form>
+{% endblock %}

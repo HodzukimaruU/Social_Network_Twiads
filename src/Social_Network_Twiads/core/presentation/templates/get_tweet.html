@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Tweet</h1>
+  {% if user.is_authenticated and tweet.author == user %}
+    <form action="{% url 'delete_tweet' tweet.id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Delete">
+    </form>
+  {% endif %}
+
+  {% if tweet.author.username == request.user.username %}
+    <li><p>Author: {{ tweet.author.first_name }} {{ tweet.author.last_name }} <a href="{% url 'profile' %}">@{{ tweet.author.username }}</a></p></li>
+  {% else %}
+    <li><p>Author: {{ tweet.author.first_name }} {{ tweet.author.last_name }} <a href="{% url 'another-profile' username=tweet.author.username %}">@{{ tweet.author.username }}</a></p></li>
+  {% endif %}
+  <li><p>Date: {{ tweet.created_at }}</p></li>
+  <li>Content: <a href="{% url 'get-tweet' tweet.id %}">{{ tweet.content }}</a></li>
+  <li>
+      <form action="{% url 'like_tweet' tweet_id=tweet.id %}" method="GET">
+          {% csrf_token %}
+          <button type="submit" class="like-button">Like</button> {{ tweet.likes_count }}
+      </form>
+  </li>
+  <li>
+      <form action="{% url 'retweet' tweet.id %}" method="GET">
+          {% csrf_token %}
+          <button type="submit" class="Retweet-button">Retweet</button> {{ tweet.retweets_count }}
+      </form>
+  </li>
+  <li>
+      <form action="{% url 'comment' tweet.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="coment-button">Comment</button> {{ tweet.comments_count }}
+      </form>
+  </li>
+  <li><p>Tags:
+          {% for tag in tweet.tags.all %}
+              {{ tag.name }}
+          {% endfor %}
+          <br></br>
+      </p></li>
+  {% if tweet.author == request.user %}
+    <li>
+        <form action="{% url 'edit-tweet' tweet_id=tweet.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="coment-button">Edit Tweet</button>
+        </form>
+    </li>
+  {% endif %}
+  <hr>
+  <h2>Comments</h2>
+  {% for comment in comments %}
+  {% if user.is_authenticated and comment.author == user %}
+    <form action="{% url 'delete_comment' tweet_id=tweet.id comment_id=comment.id %}" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Delete">
+    </form>
+  {% endif %}
+
+  <p>Author: {{ comment.author }}</p>
+  <p>Date: {{ comment.created_at }}</p>
+  <p>Content: <a href="{% url 'get-tweet' comment.id %}">{{ comment.content|urlize|safe }}</a></p>
+  <form action="{% url 'comment' tweet_id=comment.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="comment-button">Comment</button> {{ comment.comments_count }}
+  </form>
+  <hr>
+{% empty %}
+  <p>No comments yet.</p>
+{% endfor %}
+{% endblock %}
+    

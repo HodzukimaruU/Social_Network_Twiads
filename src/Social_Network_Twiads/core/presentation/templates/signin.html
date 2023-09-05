@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Twiads awesome greatest social network in UNIVERSE</title>
+    </head>
+
+    <body>
+        <nav>
+            <a href="{% url 'registration' %}">Sign up</a>
+        </nav>
+    </body>
+    <h1>Sing In</h1>
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" id="submit"><br>
+    </form>
+</html>

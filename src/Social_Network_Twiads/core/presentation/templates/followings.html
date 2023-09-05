@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Followings</h1>
+{% for following_user in following_users %}
+<p>{{ following_user.first_name }} {{ following_user.last_name }}
+    {% if following_user.username == request.user.username %}
+        <a href="{% url 'profile' %}">@{{ following_user.username }}</a>
+    {% else %}
+        <a href="{% url 'another-profile' username=following_user.username %}">@{{ following_user.username }}</a>
+    {% endif %}
+    </p>
+{% empty %}
+    <p>No users followed yet.</p>
+{% endfor %}
+{% endblock %}

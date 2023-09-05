@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Comment on Tweet</h1>
+
+    <div class="tweet">
+        {% if tweet.author.username == request.user.username %}
+            <li><p>Author: {{ tweet.author.first_name }} {{ tweet.author.last_name }} <a href="{% url 'profile' %}">@{{ tweet.author.username }}</a></p></li>
+        {% else %}
+            <li><p>Author: {{ tweet.author.first_name }} {{ tweet.author.last_name }} <a href="{% url 'another-profile' username=tweet.author.username %}">@{{ tweet.author.username }}</a></p></li>
+        {% endif %}
+        <li><p>Date: {{ tweet.created_at }}</p></li>
+        <li><p>Content: {{ tweet.content|urlize|safe }}</p></li>
+        <li>
+          <form action="{% url 'like_tweet' tweet_id=tweet.id %}" method="POST">
+              {% csrf_token %}
+              <button type="submit" class="like-button">Like</button> {{ tweet.likes_count }}
+          </form>
+        </li>
+    </div>
+
+    <form method="POST" action="{% url 'comment' tweet.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="tweet_id" value="{{ tweet.id }}">
+        <div class="form-group">
+            <label for="comment">Add Comment:</label>
+            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
